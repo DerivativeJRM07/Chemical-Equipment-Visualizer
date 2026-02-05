@@ -60,5 +60,5 @@ cd chemical-frontend
 npm install
 npm start
 
-### 4. Desktop app launch 
+### 4. Desktop app launch
 python main_desktop.py

@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import ProcessCSVView
+from .views import FileUploadView, DownloadPDFView # Add DownloadPDFView
 
 urlpatterns = [
-    path('upload/', ProcessCSVView.as_view(), name='upload_csv'),
+    path('upload/', FileUploadView.as_view(), name='file-upload'),
+    path('download-pdf/', DownloadPDFView.as_view(), name='download-pdf'), # Add this
 ]
