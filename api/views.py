@@ -6,43 +6,55 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser
 from rest_framework import status
 from reportlab.pdfgen import canvas
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from rest_framework.permissions import AllowAny
 
 # We'll store the last processed data in memory for the PDF 
-# (In a real app, we would use a database)
 LAST_ANALYSIS = {}
 
+@method_decorator(csrf_exempt, name='dispatch')
 class FileUploadView(APIView):
     parser_classes = (MultiPartParser,)
+    permission_classes = [AllowAny]  # Allows React to upload without login issues
 
     def post(self, request, *args, **kwargs):
         file_obj = request.FILES.get('file')
+        
         if not file_obj:
             return Response({"error": "No file uploaded"}, status=status.HTTP_400_BAD_REQUEST)
 
-        df = pd.read_csv(file_obj)
-        
-        summary = {
-            "total_rows": len(df),
-            "mean_flowrate": df['Flowrate'].mean(),
-            "mean_pressure": df['Pressure'].mean(),
-            "mean_temperature": df['Temperature'].mean(),
-        }
-        
-        distribution = df['Type'].value_counts().to_dict()
-        data_json = df.to_dict(orient='records')
+        try:
+            df = pd.read_csv(file_obj)
+            
+            summary = {
+                "total_rows": len(df),
+                "mean_flowrate": float(df['Flowrate'].mean()),
+                "mean_pressure": float(df['Pressure'].mean()),
+                "mean_temperature": float(df['Temperature'].mean()),
+            }
+            
+            distribution = df['Type'].value_counts().to_dict()
+            data_json = df.to_dict(orient='records')
 
-        # Save for PDF export
-        global LAST_ANALYSIS
-        LAST_ANALYSIS = {"summary": summary, "distribution": distribution}
+            # Save for PDF export
+            global LAST_ANALYSIS
+            LAST_ANALYSIS = {"summary": summary, "distribution": distribution}
 
-        return Response({
-            "summary": summary,
-            "distribution": distribution,
-            "data": data_json
-        }, status=status.HTTP_201_CREATED)
+            return Response({
+                "summary": summary,
+                "distribution": distribution,
+                "data": data_json
+            }, status=status.HTTP_201_CREATED)
+            
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class DownloadPDFView(APIView):
+    permission_classes = [AllowAny] # Set to IsAuthenticated if you want security back later
+
     def get(self, request):
+        global LAST_ANALYSIS
         if not LAST_ANALYSIS:
             return Response({"error": "No data to export"}, status=400)
 

@@ -42,14 +42,21 @@ class EquipmentApp(QMainWindow):
     def upload_file(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Open CSV", "", "CSV Files (*.csv)")
         if file_path:
-            files = {'file': open(file_path, 'rb')}
+            # Open the file in a 'with' block to ensure it closes properly
             try:
-                # Talking to your Django Backend!
-                response = requests.post("http://127.0.0.1:8000/api/upload/", files=files)
-                if response.status_code == 201:
-                    self.display_data(response.json())
-            except:
-                self.summary_label.setText("Error: Is the Django server running?")
+                with open(file_path, 'rb') as f:
+                    files = {'file': f}
+                    # Talking to your Django Backend!
+                    # Note: Using AllowAny on backend, so auth is optional for the demo
+                    response = requests.post("http://127.0.0.1:8000/api/upload/", files=files)
+                    
+                    if response.status_code == 201:
+                        self.display_data(response.json())
+                        self.summary_label.setText("Upload Successful!")
+                    else:
+                        self.summary_label.setText(f"Error: Server returned {response.status_code}")
+            except Exception as e:
+                self.summary_label.setText(f"Error: {str(e)}")
 
     def display_data(self, result):
         summary = result['summary']
@@ -63,11 +70,11 @@ class EquipmentApp(QMainWindow):
         self.table.setHorizontalHeaderLabels(["Name", "Type", "Flow", "Press", "Temp"])
         
         for i, row in enumerate(data_rows):
-            self.table.setItem(i, 0, QTableWidgetItem(str(row['Equipment Name'])))
-            self.table.setItem(i, 1, QTableWidgetItem(str(row['Type'])))
-            self.table.setItem(i, 2, QTableWidgetItem(str(row['Flowrate'])))
-            self.table.setItem(i, 3, QTableWidgetItem(str(row['Pressure'])))
-            self.table.setItem(i, 4, QTableWidgetItem(str(row['Temperature'])))
+            self.table.setItem(i, 0, QTableWidgetItem(str(row.get('Equipment Name', 'N/A'))))
+            self.table.setItem(i, 1, QTableWidgetItem(str(row.get('Type', 'N/A'))))
+            self.table.setItem(i, 2, QTableWidgetItem(str(row.get('Flowrate', 'N/A'))))
+            self.table.setItem(i, 3, QTableWidgetItem(str(row.get('Pressure', 'N/A'))))
+            self.table.setItem(i, 4, QTableWidgetItem(str(row.get('Temperature', 'N/A'))))
 
         self.canvas.axes.cla()
         self.canvas.axes.bar(dist.keys(), dist.values(), color='skyblue')
