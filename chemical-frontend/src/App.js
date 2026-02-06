@@ -76,9 +76,10 @@ function App() {
           <div style={{ flex: 1, padding: '15px', background: '#f8f9fa', borderRadius: '8px' }}>
             <h3>Data Summary</h3>
             <p><strong>Total Equipment:</strong> {summary.total_rows}</p>
-            <p><strong>Avg Flowrate:</strong> {summary.mean_flowrate.toFixed(2)}</p>
-            <p><strong>Avg Pressure:</strong> {summary.mean_pressure.toFixed(2)}</p>
-            <p><strong>Avg Temp:</strong> {summary.mean_temp.toFixed(2)}</p>
+            {/* Added Optional Chaining and fixed naming to match Django views.py */}
+            <p><strong>Avg Flowrate:</strong> {summary?.mean_flowrate?.toFixed(2) || "0.00"}</p>
+            <p><strong>Avg Pressure:</strong> {summary?.mean_pressure?.toFixed(2) || "0.00"}</p>
+            <p><strong>Avg Temp:</strong> {summary?.mean_temperature?.toFixed(2) || "0.00"}</p>
           </div>
 
           {/* 3. Visualization Section */}
