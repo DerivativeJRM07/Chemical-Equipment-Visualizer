@@ -8,7 +8,7 @@ from rest_framework import status
 from reportlab.pdfgen import canvas
 
 # We'll store the last processed data in memory for the PDF 
-# (In a real app, you'd use a database)
+# (In a real app, we would use a database)
 LAST_ANALYSIS = {}
 
 class FileUploadView(APIView):

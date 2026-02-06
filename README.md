@@ -1,5 +1,5 @@
-# 🧪 Chemical Equipment Parameter Visualizer
-> A Professional Hybrid Full-Stack Application for Engineering Data Analytics.
+# 🧪 Chemical Equipment Parameter Visualizer (Hybrid Web + Desktop App)
+> A Professional Application for Engineering Data Analytics.
 
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![Django](https://img.shields.io/badge/Django-4.2-092E20?style=flat&logo=django&logoColor=white)](https://www.djangoproject.com/)
@@ -8,7 +8,7 @@
 ---
 
 ## 📖 Project Overview
-The **Chemical Equipment Parameter Visualizer** is a high-performance hybrid application designed for chemical engineers to analyze, visualize, and report equipment parameters efficiently.
+The **Chemical Equipment Parameter Visualizer (Hybrid Web + Desktop App)** is a high-performance hybrid application designed for chemical engineers to analyze, visualize, and report equipment parameters efficiently.
 
 The system uses a centralized **Django REST API** that serves:
 - 🌐 A **React.js Web Dashboard**
@@ -65,9 +65,10 @@ python manage.py createsuperuser
 python manage.py runserver
 
 #Backend will run at:
-http://127.0.0.1:8000/
+http://127.0.0.1:8000/ 
 
 ---
+
 
 ### 3 Web Frontend setup(React)
 cd chemical-frontend
